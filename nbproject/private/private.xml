@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group name="2d game">
+            <file>file:/C:/Users/dell/Desktop/demo/public_html/src/MyGame/Objects/Chaser.js</file>
+            <file>file:/C:/Users/dell/Desktop/demo/public_html/src/Engine/Utils/BoundingBox.js</file>
+            <file>file:/C:/Users/dell/Desktop/demo/public_html/src/MyGame/Objects/Hero.js</file>
+            <file>file:/C:/Users/dell/Desktop/demo/public_html/src/MyGame/Level2_2.js</file>
+            <file>file:/C:/Users/dell/Desktop/demo/public_html/src/MyGame/BalanceLevel.js</file>
+        </group>
+        <group name="Raspberry">
+            <file>file:/C:/Users/77597/Documents/NetBeansProjects/Raspberry1.0/public_html/src/MyGame/Level3.js</file>
+            <file>file:/C:/Users/77597/Documents/NetBeansProjects/Raspberry1.0/public_html/src/MyGame/Level2_3.js</file>
+            <file>file:/C:/Users/77597/Documents/NetBeansProjects/Raspberry1.0/public_html/src/MyGame/MyGame.js</file>
+        </group>
+        <group name="V2-EngineWithPhysics+Particles">
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/Level1.js</file>
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/MyGame.js</file>
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/Level3.js</file>
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/MyGame_Bounds.js</file>
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/BalanceLevel.js</file>
+            <file>file:/C:/Users/XieChulin/Desktop/2Dprogram/V2-EngineWithPhysics+Particles/Raspberry6.0/public_html/src/MyGame/Level2_3.js</file>
+        </group>
+    </open-files>
+</project-private>
