@@ -10,8 +10,8 @@
 "use strict"; 
 
 
-function Chaser(texture, atX, atY, w, h) {
-    this.mCycleLeft = 1700;
+function Chaser(texture, atX, atY, w, h,speed,life) {
+    this.mCycleLeft = life;
 
     this.mChaser = new TextureRenderable(texture);
 
@@ -20,7 +20,7 @@ function Chaser(texture, atX, atY, w, h) {
     this.mChaser.getXform().setSize(w, h);
                                 // show each element for mAnimSpeed updates
     GameObject.call(this, this.mChaser);
-    this.setSpeed(2);
+    this.setSpeed(speed);
     this.setCurrentFrontDir([1, 0]);
 
     var rigidShape = new RigidRectangle(this.getXform(), w,h);

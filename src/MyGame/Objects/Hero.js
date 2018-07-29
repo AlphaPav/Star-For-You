@@ -11,13 +11,13 @@
 var kWASDDelta = 2;
 var cnt = 0;
 
-function Hero(spriteTexture, atX, atY, w, h) {
+function Hero(spriteTexture, atX, atY, w, h,top) {
     
     this.mHero = new SpriteAnimateRenderable(spriteTexture);
     this.mHero.setColor([1, 1, 1, 0]);
     this.mHero.getXform().setPosition(atX, atY);
     this.mHero.getXform().setSize(w, h);
-    this.mHero.setSpriteSequence(1024,0,150,150,2,0);
+    this.mHero.setSpriteSequence(top,0,150,150,2,0);
     this.mHero.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateRight);
     this.mHero.setAnimationSpeed(10);
     this.setBoundRadius(w/2);
@@ -37,42 +37,70 @@ function Hero(spriteTexture, atX, atY, w, h) {
     //used for StartScene automove 
      this.count=0;
      this.autodelta =kWASDDelta;
+     
 }
 
 gEngine.Core.inheritPrototype(Hero, GameObject);
 
-Hero.prototype.keyControl = function () {
+Hero.prototype.keyControl = function (PlatformSet1,SpringSet2,v) {
     var xform = this.getXform();
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {
+    this.ObjectSet1=PlatformSet1;
+    this.ObjectSet2=SpringSet2;
+    var flag=0;//0 for no collision
+    var spaceflag=0;
+    var i;
+    if(this.ObjectSet1!==null){
+        for(i=1;i<this.ObjectSet1.size();i++){
+        var ObjectPos=this.ObjectSet1.getObjectAt(i).getXform();
+        if((this.getXform().getYPos()-this.mHeight/2)<=(ObjectPos.getYPos()+ObjectPos.getHeight()/2)
+            &&(this.getXform().getXPos()+this.mWidth/2-3)>(ObjectPos.getXPos()-ObjectPos.getWidth()/2)
+            &&(this.getXform().getXPos()-this.mWidth/2+3)<(ObjectPos.getXPos()+ObjectPos.getWidth()/2)
+            &&(this.getXform().getYPos()+this.mHeight/2-3)>(ObjectPos.getYPos()-ObjectPos.getHeight()/2)){
+            flag=1;
+        }
+    }
+    }
+    if(this.ObjectSet2!==null&&flag===0){
+        for(i=0;i<this.ObjectSet2.size();i++){
+        var ObjectPos=this.ObjectSet2.getObjectAt(i).getXform();
+        if((this.getXform().getYPos()-this.mHeight/2)<=(ObjectPos.getYPos()+ObjectPos.getHeight()/2)
+            &&(this.getXform().getXPos()+this.mWidth/2)>=(ObjectPos.getXPos()-ObjectPos.getWidth()/2)
+            &&(this.getXform().getXPos()-this.mWidth/2)<=(ObjectPos.getXPos()+ObjectPos.getWidth()/2)
+            &&(this.getXform().getYPos()+this.mHeight/2)>=(ObjectPos.getYPos()-ObjectPos.getHeight()/2)){
+                flag=1;
+            }
+        }
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+        spaceflag=1;
         
-        if(this.getRigidBody().getVelocity()[1] === 0) {
-            cnt = 0; 
-            //this.mMonster.setleft(300);
-            //this.mMonster.updateAnimation();
-        } 
-        //xform.incYPosBy(kWASDDelta);
-        if(cnt === 0 || cnt === 1){
-            this.getRigidBody().setVelocity(this.getRigidBody().getVelocity()[0],300);
-            //this.mMonster.setleft(300);
-            // this.getRigidBody().setAngularVelocity(0);
-            cnt++;
-        }                      
+    }
+    
+    if(flag===1&&spaceflag===1){
+        cnt=0;
+    }
+    
+    if(flag===1&&spaceflag===0){
+        cnt=1;
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {
+        if(cnt === 0){           
+            this.getRigidBody().setVelocity(this.getRigidBody().getVelocity()[0],v);
+            }    
+        if(cnt === 1){
+            this.getRigidBody().setVelocity(this.getRigidBody().getVelocity()[0],v);
+        }   
+        cnt++;
     }
     
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)) {
-        
-        //this.getRigidBody().setVelocity(this.getRigidBody().getVelocity()[0],this.getRigidBody().getVelocity()[1]);
-        //this.getRigidBody().setAngularVelocity(0);
-        this.mHero.setposition(424,0);
-            //this.mMonster.updateAnimation();
+        this.mHero.setposition(422,0);
         this.mHero.updateAnimation();
         xform.incXPosBy(-kWASDDelta);
-        
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
-        
-        //this.getRigidBody().setVelocity(this.getRigidBody().getVelocity()[0],this.getRigidBody().getVelocity()[1]);
-        //this.getRigidBody().setAngularVelocity(0);
         this.mHero.setposition(1024,0);
         this.mHero.updateAnimation();
         xform.incXPosBy(kWASDDelta);
@@ -85,19 +113,15 @@ Hero.prototype.keyControl = function () {
 
 Hero.prototype.update = function () {
     GameObject.prototype.update.call(this);
-    //this.mMonster.updateAnimation();
-    //this.keyControl();
 };
 
 Hero.prototype.updateChaser = function (set) {
     GameObject.prototype.update.call(this);
-    //this.mMonster.updateAnimation();
     var i, obj;
     var heroBounds = this.getBBox();
     var p = this.getXform().getPosition();
     for (i=0; i<set.size(); i++) {
         obj = set.getObjectAt(i);
-        // chase after hero
         obj.rotateObjPointTo(p, 0.8);
         if (obj.getBBox().intersectsBound(heroBounds)) {
             gEngine.GameLoop.stop();
@@ -105,7 +129,7 @@ Hero.prototype.updateChaser = function (set) {
     }
 };
 
-Hero.prototype.CheckUpdate=function(Object,dir,rate){
+Hero.prototype.CheckUpdate_Platform=function(Object,dir,rate){
     this.mObject=Object;
     this.mDir=dir;//0 for x; 1 for y
     this.mRate=rate;
@@ -113,8 +137,8 @@ Hero.prototype.CheckUpdate=function(Object,dir,rate){
     this.mObjectPos=this.mObject.getXform();
     
     if((this.getXform().getYPos()-this.mHeight/2)<=(this.mObjectPos.getYPos()+this.mObjectPos.getHeight()/2)
-            &&(this.getXform().getXPos()+this.mWidth/2)>=(this.mObjectPos.getXPos()-this.mObjectPos.getWidth()/2)
-            &&(this.getXform().getXPos()-this.mWidth/2)<=(this.mObjectPos.getXPos()+this.mObjectPos.getWidth()/2)
+            &&(this.getXform().getXPos()+this.mWidth/2)>(this.mObjectPos.getXPos()-this.mObjectPos.getWidth()/2)
+            &&(this.getXform().getXPos()-this.mWidth/2)<(this.mObjectPos.getXPos()+this.mObjectPos.getWidth()/2)
             &&(this.getXform().getYPos()+this.mHeight/2)>=(this.mObjectPos.getYPos()-this.mObjectPos.getHeight()/2)){
         flag=1;
     }
@@ -123,10 +147,12 @@ Hero.prototype.CheckUpdate=function(Object,dir,rate){
         this.getXform().incXPosBy(this.mRate);
     }
     if(flag===1&&this.mDir===1){
-        
+        this.getXform().incYPosBy(this.mRate);
     }
 };
-
+Hero.prototype.CheckUpdate_Collision=function(){
+    
+};
 Hero.prototype.StartSceneautomove= function(){
 
     if(this.count<=120){
@@ -144,4 +170,7 @@ Hero.prototype.StartSceneautomove= function(){
         this.count =0;
         this.autodelta = -this.autodelta ;
     }
+};
+Hero.prototype.setWASDDelta=function(delta){
+    kWASDDelta=delta;
 };

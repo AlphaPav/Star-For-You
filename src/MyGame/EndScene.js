@@ -16,6 +16,8 @@ function EndScene(){
     this.mMsg=null;
     this.mMsg1=null;
     this.mCui=null;
+    this.kSprite = "assets/animation.png";
+    this.kStar = "assets/yellow.png";
 }
 gEngine.Core.inheritPrototype(EndScene, Scene);
 EndScene.prototype.loadScene=function(){

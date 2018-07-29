@@ -19,6 +19,9 @@ function Level2_3() {
     this.kRubbish="assets/2D_GAME_rubbish.png";
     this.kStar = "assets/yellow.png";
     this.kDoor="assets/2D_GAME_door.png";
+    this.kbg="assets/bgtest1.png";
+    this.kCue="assets/Star.wav";
+    this.kBGM = "assets/Lopu.mp3";
     // The camera to view the scene
     this.mCamera = null;
     this.mCamera2=null;
@@ -26,6 +29,7 @@ function Level2_3() {
     this.mPlatformset = null;
     this.mRubbishset = null;
     this.mStarset = null;
+    this.mSpringSet=null;
     this.mAllObjs=  null;
     this.mCollisionInfos = [];
   
@@ -40,7 +44,7 @@ function Level2_3() {
     this.flag=0;
     
     this.starcount = 0;
-    this.totalcount = 10;
+    this.totalcount = 14;
     this.springcount = 0;
     this.springflag = 0;
     this.springfirst = 0;
@@ -57,12 +61,15 @@ gEngine.Core.inheritPrototype(Level2_3, Scene);
 
 
 Level2_3.prototype.loadScene = function () {
-    gEngine.Textures.loadTexture(this.kDoor);
+      gEngine.Textures.loadTexture(this.kDoor);
     gEngine.Textures.loadTexture(this.kSprite);
     gEngine.Textures.loadTexture(this.kHole);
     gEngine.Textures.loadTexture(this.kRubbish);
     gEngine.Textures.loadTexture(this.kStar);
-    if(gEngine.ResourceMap.isAssetLoaded("star")){
+     gEngine.Textures.loadTexture(this.kbg);
+     gEngine.AudioClips.loadAudio(this.kCue);
+     gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+     if(gEngine.ResourceMap.isAssetLoaded("star")){
         //this.mCui = gEngine.ResourceMap.retrieveAsset("Cui");
         this.starcount = gEngine.ResourceMap.retrieveAsset("star");
     }
@@ -75,10 +82,16 @@ Level2_3.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.kHole);
     gEngine.Textures.unloadTexture(this.kRubbish);
     gEngine.Textures.unloadTexture(this.kStar);
- 
+     gEngine.Textures.unloadTexture(this.kbg);
+    gEngine.AudioClips.unloadAudio(this.kCue);
+    gEngine.AudioClips.stopBackgroundAudio();
+    
     if(this.skip)
       {
-          var nextLevel =new Level3();
+          //var nextLevel =new Level3();
+          gEngine.ResourceMap.loadstar("level2",this.starcount);
+          var nextLevel=new PassScene(2,this.starcount);
+                   
           gEngine.Core.startScene(nextLevel);
       }
       else{
@@ -88,14 +101,10 @@ Level2_3.prototype.unloadScene = function () {
            }
            else{
                 gEngine.ResourceMap.loadstar("star",this.starcount);
-                if(this.starcount<this.totalcount){
-                    var new_level=new LoseScene(2);
+                gEngine.ResourceMap.loadstar("level2",this.starcount);
+                    var new_level=new PassScene(2,this.starcount);
                     gEngine.Core.startScene(new_level);
-                }
-                else{
-                    var new_level=new Level3();
-                    gEngine.Core.startScene(new_level);
-                }
+                
            }
       }
     //gEngine.ResourceMap.asyncLoadRequested()("Cui",this.mCui);
@@ -123,7 +132,7 @@ Level2_3.prototype.initialize = function () {
             vec2.fromValues(40,20),
             80,
             [0,540,120,60]);
-    this.mCui.setBackgroundColor([0.8,0.8,0.8,1]);
+    this.mCui.setBackgroundColor([0.705, 0.443, 0.341,1]);
     
             // sets the background to gray
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
@@ -132,9 +141,13 @@ Level2_3.prototype.initialize = function () {
     this.mRubbishset = new GameObjectSet(); 
     this.mStarset = new GameObjectSet(); 
     this.mAllObjs= new GameObjectSet(); 
+    this.mSpringSet=new GameObjectSet();
     
+    this.mbg = new TextureRenderable(this.kbg);
+    this.mbg.getXform().setPosition(1000,300);
+    this.mbg.getXform().setSize(2000,600);
     
-    this.mHero = new Hero(this.kSprite, 910,450,50,50);
+    this.mHero = new Hero(this.kSprite, 910,450,50,50,422);
     this.mHole=new Item(910,450,0,80,80,this.kHole);
 
     this.mFirstObject = this.mPlatformset.size();
@@ -167,8 +180,7 @@ Level2_3.prototype.initialize = function () {
     
     
     this.mLeft=  new Spring(this.kSprite,925,273,50,50,274,0);
-    //this.platform3=new MapObject(934,266,0,32,16,null); // spring
-    //this.mPlatformset.addToSet(this.platform3);
+    this.mSpringSet.addToSet(this.mLeft);
     
     this.platform4=new MapObject(470,50,0,150,16,null);
     this.mPlatformset.addToSet(this.platform4);
@@ -177,28 +189,46 @@ Level2_3.prototype.initialize = function () {
     this.mPlatformset.addToSet(this.platform5);
     this.mDoor=new Item(300,250,0,60,60,this.kDoor);
     
-    this.platform6=new MapObject(130,300,90,600,16,null);
+    this.platform6=new MapObject(130,300,0,16,600,null);
     this.mPlatformset.addToSet(this.platform6);
-    this.platform7=new MapObject(230,300,90,600,16,null);
+    this.platform7=new MapObject(230,300,0,16,600,null);
     this.mPlatformset.addToSet(this.platform7);
+    
     var angle1 = Math.atan(140.0/50.0)*180*1.0/ 3.1415926;
     var len1= Math.sqrt(Math.pow(50,2)+Math.pow(300,2));
-    this.platform9=new MapObject(180,450,angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform9);
-    this.platform8=new MapObject(180,150,angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform8);
-    this.platform10=new MapObject(180,450,180-angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform10);
-    this.platform11=new MapObject(180,150,180-angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform11);
+    
+    this.platform9=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform9.setColor([0.447,0.286,0.219,1]);
+    this.platform9.getXform().setPosition(180,450);
+    this.platform9.getXform().setRotationInDegree(angle1);
+    this.platform9.getXform().setSize(len1,16);
+    
+    this.platform8=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform8.setColor([0.447,0.286,0.219,1]);
+    this.platform8.getXform().setPosition(180,150);
+    this.platform8.getXform().setRotationInDegree(angle1);
+    this.platform8.getXform().setSize(len1,16);
+    
+    this.platform10=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform10.setColor([0.447,0.286,0.219,1]);
+    this.platform10.getXform().setPosition(180,450);
+    this.platform10.getXform().setRotationInDegree(180-angle1);
+    this.platform10.getXform().setSize(len1,16);
+    
+    this.platform11=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform11.setColor([0.447,0.286,0.219,1]);
+    this.platform11.getXform().setPosition(180,150);
+    this.platform11.getXform().setRotationInDegree(180-angle1);
+    this.platform11.getXform().setSize(len1,16);
+
      this.platform12=new MapObject(180,300,0,100,16,null);
     this.mPlatformset.addToSet(this.platform12);
 
-    this.platform13=new MapObject(968,300,90,600,16,null);//right wall
+    this.platform13=new MapObject(968,300,0,16,600,null);//right wall
     this.mPlatformset.addToSet(this.platform13);
     this.platform14=new MapObject(480,608,0,976,16,null);//top wall
     this.mPlatformset.addToSet(this.platform14);
-    this.platform15=new MapObject(-8,300,90,600,16,null);//left wall
+    this.platform15=new MapObject(-8,300,0,16,600,null);//left wall
     this.mPlatformset.addToSet(this.platform15);
  
     this.mRubbish=new Item(600,650,0,60,60,this.kRubbish);
@@ -217,13 +247,13 @@ Level2_3.prototype.initialize = function () {
 Level2_3.prototype.initializeKeyN= function(){
     
     this.mKeyNTip = new FontRenderable("Hold [N] to skip to Level3");
-    this.mKeyNTip.setColor([0.6,0.6,0.6, 1]);
+    this.mKeyNTip.setColor([0.447,0.286,0.219, 1]);
     this.mKeyNTip.getXform().setPosition(720,50);
     this.mKeyNTip.setTextHeight(14);
     this.mAllObjs.addToSet(this.mKeyNTip);
     
     this.mKeyNBar =new Renderable();
-    this.mKeyNBar.setColor([0.6,0.6,0.6,1]);
+    this.mKeyNBar.setColor([0.447,0.286,0.219,1]);
     this.mKeyNBar.getXform().setPosition(825,30);
     this.mKeyNBar.getXform().setSize(200,3);
     this.mAllObjs.addToSet(this.mKeyNBar);
@@ -235,6 +265,7 @@ Level2_3.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
+    this.mbg.draw(this.mCamera);
     this.mRubbishset.draw(this.mCamera);
     this.mStarset.draw(this.mCamera);
     this.mPlatformset.draw(this.mCamera);
@@ -243,8 +274,13 @@ Level2_3.prototype.draw = function () {
     this.mDoor.draw(this.mCamera);
     this.mAllObjs.draw(this.mCamera); 
     this.mLeft.draw(this.mCamera);
+    this.platform8.draw(this.mCamera);
+    this.platform9.draw(this.mCamera);
+    this.platform10.draw(this.mCamera);
+    this.platform11.draw(this.mCamera);
       
     this.mCamera2.setupViewProjection();
+    this.mbg.draw(this.mCamera2);
     this.mLastHole.draw(this.mCamera2);
     this.mPlatformset.draw(this.mCamera2);
     this.mRubbishset.draw(this.mCamera2);
@@ -252,10 +288,14 @@ Level2_3.prototype.draw = function () {
     this.mHole.draw(this.mCamera2);
     this.mDoor.draw(this.mCamera2);
     this.mLastHole.draw(this.mCamera2);
-      this.mLeft.draw(this.mCamera2);
+    this.mLeft.draw(this.mCamera2);
+    this.platform8.draw(this.mCamera2);
+    this.platform9.draw(this.mCamera2);
+    this.platform10.draw(this.mCamera2);
+    this.platform11.draw(this.mCamera2);
     
     this.mCui.setupViewProjection();
-      this.mMsg2.draw(this.mCui); 
+    this.mMsg2.draw(this.mCui); 
     this.mMsg.draw(this.mCui); //mcamera->canvus? 
     this.mStaritem.draw(this.mCui);
     this.mCollisionInfos = []; 
@@ -321,7 +361,8 @@ Level2_3.prototype.update = function () {
             }
             else{
                 this.mHero.getXform().setPosition(this.x,this.y);
-                this.mHero.getRigidBody().setVelocity(-370,this.mHero.getRigidBody().getVelocity()[1]);
+                this.mHero.getRigidBody().setVelocity(-380,this.mHero.getRigidBody().getVelocity()[1]);
+                this.mHero.mHero.setposition(422,0);
                 this.springcount=0;
                 this.springflag=0;
                 this.springfirst=1;
@@ -336,7 +377,8 @@ Level2_3.prototype.update = function () {
             }
             else{
                 this.mHero.getXform().setPosition(this.x,this.y);
-                this.mHero.getRigidBody().setVelocity(-370,this.mHero.getRigidBody().getVelocity()[1]);
+                this.mHero.getRigidBody().setVelocity(-380,this.mHero.getRigidBody().getVelocity()[1]);
+                this.mHero.mHero.setposition(422,0);
                 this.springcount=0;
                 this.springflag=0;
                 this.springfirst=1;
@@ -355,7 +397,9 @@ Level2_3.prototype.update = function () {
 
     var obj = this.mPlatformset.getObjectAt(this.mCurrentObj);
     
-    obj.keyControl();
+    obj.keyControl(this.mPlatformset,this.mSpringSet,300);
+    //obj.keyControl(this.mPlatformset,null);
+
     obj.getRigidBody().userSetsState();
     
     this.mPlatformset.update(this.mCamera);
@@ -400,6 +444,7 @@ Level2_3.prototype.update = function () {
             this.starcount++;
             this.mStarset.getObjectAt(i).setVisibility(false);
             this.mStarset.removeFromSet(this.mStarset.getObjectAt(i));
+            gEngine.AudioClips.playACue(this.kCue);
         }
     }
     

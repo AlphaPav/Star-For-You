@@ -38,6 +38,10 @@ LoseScene.prototype.unloadScene=function(){
         var nextLevel =new Level3();
        gEngine.Core.startScene(nextLevel);
     }
+    else if(this.mnewlevel===5){
+        var nextLevel =new Level5();
+       gEngine.Core.startScene(nextLevel);
+    }
     
 };
 

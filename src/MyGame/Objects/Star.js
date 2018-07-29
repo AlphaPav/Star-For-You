@@ -11,7 +11,7 @@ function Star(spriteTexture, atX, atY, w, h) {
     this.mStar.getXform().setPosition(atX, atY);
     this.mStar.getXform().setSize(w, h);
     this.mStar.setSpriteSequence(724,0,150,150,2,0);
-    this.mStar.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
+    this.mStar.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateRight);
     this.mStar.setAnimationSpeed(30);
     this.setBoundRadius(w/2);
     

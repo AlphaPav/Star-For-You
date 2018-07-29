@@ -20,7 +20,7 @@ function BalanceLevel() {
     this.kStar = "assets/yellow.png";
     this.kHole="assets/Hole.png";
     this.starcount = 0;
-    this.totalcount = 10;
+    this.totalcount = 14;
     this.kBlackHole= "assets/BlackHole.png";
     this.restart = true;
     this.skip=false;
@@ -29,7 +29,9 @@ function BalanceLevel() {
     this.kkeyUp="assets/keyUp.png";
     this.kkeyS="assets/keyS.png";
     this.kkeyW="assets/keyW.png";
-    
+    this.kbg="assets/background.png";    
+    this.kCue="assets/Star.wav";
+    this.kBGM = "assets/Lopu.mp3";
     this.mKeyNBar= null;
     this.time= 0;
     this.LastKeyNTime=0;
@@ -50,6 +52,11 @@ BalanceLevel.prototype.loadScene = function () {
     gEngine.Textures.loadTexture(this.kkeyUp);
     gEngine.Textures.loadTexture(this.kkeyS);
     gEngine.Textures.loadTexture(this.kkeyW);
+    gEngine.Textures.loadTexture(this.kbg);
+    gEngine.AudioClips.loadAudio(this.kCue);
+    
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+    
     if(gEngine.ResourceMap.isAssetLoaded("star")){
         //this.mCui = gEngine.ResourceMap.retrieveAsset("Cui");
         this.starcount = gEngine.ResourceMap.retrieveAsset("star");
@@ -69,10 +76,13 @@ BalanceLevel.prototype.unloadScene = function () {
      gEngine.Textures.unloadTexture(this.kkeyUp);
      gEngine.Textures.unloadTexture(this.kkeyS);
      gEngine.Textures.unloadTexture(this.kkeyW);
-     
+     gEngine.Textures.unloadTexture(this.kbg);
+     gEngine.AudioClips.unloadAudio(this.kCue);
+     gEngine.AudioClips.stopBackgroundAudio();
+
 	  if(this.skip)
 	     {
-                  gEngine.ResourceMap.loadstar("star",this.starcount);
+                gEngine.ResourceMap.loadstar("star",this.starcount);
 	        var nextLevel =new Level2_3();
 	        gEngine.Core.startScene(nextLevel);
 	     }
@@ -99,8 +109,8 @@ BalanceLevel.prototype.initialize= function(){
      
      this.mCamera2= new Camera(
         vec2.fromValues(400, 300), // position of the camera
-       800,                     // width of camera
-        [680, 510, 120, 90]         // viewport (orgX, orgY, width, height)
+        320,                     // width of camera
+        [722, 480, 64, 120]         // viewport (orgX, orgY, width, height)
     );
       this.mCamera2.setBackgroundColor([0.9, 0.9, 0.9, 1]);
      gEngine.DefaultResources.setGlobalAmbientIntensity(3);
@@ -109,8 +119,11 @@ BalanceLevel.prototype.initialize= function(){
             vec2.fromValues(40,20),
             90,
             [0,540,120,60]);
-    this.mCui.setBackgroundColor([0.8,0.8,0.8,1]);
-   
+    this.mCui.setBackgroundColor([0.662, 0.388, 0.376,1]);
+    this.mbg = new TextureRenderable(this.kbg);
+    this.mbg.getXform().setPosition(400,300);
+    this.mbg.getXform().setSize(800,600);
+    
     this.mMsg = new FontRenderable("0/10");
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(43,27);
@@ -139,7 +152,7 @@ BalanceLevel.prototype.initialize= function(){
     var Ysum =this.RightPoint.getXform().getYPos()+this.LeftPoint.getXform().getYPos();
     this.heroheight =40;
     this.herowidth =40;
-    this.mHero = new Hero(this.kHero, Xsum*1.0/2, Ysum*1.0/2+this.lever.getXform().getHeight()+ this.heroheight/2,this.herowidth,this.heroheight);
+    this.mHero = new Hero(this.kHero, Xsum*1.0/2, Ysum*1.0/2+this.lever.getXform().getHeight()+ this.heroheight/2,this.herowidth,this.heroheight,1024);
     this.mHero.getRigidBody().setMass(0);
     this.mAllObjs.addToSet(this.mHero);
   
@@ -327,13 +340,13 @@ BalanceLevel.prototype.initializeGuideobj= function(){
 
 BalanceLevel.prototype.initializeKeyN= function(){
     this.mKeyNTip = new FontRenderable("Hold [N] to skip to Level2.3");
-    this.mKeyNTip.setColor([0.6,0.6,0.6, 1]);
+    this.mKeyNTip.setColor([0.447,0.286,0.219, 1]);
     this.mKeyNTip.getXform().setPosition(250,20);
     this.mKeyNTip.setTextHeight(7);
     this.mAllObjs.addToSet(this.mKeyNTip);
     
     this.mKeyNBar =new Renderable();
-    this.mKeyNBar.setColor([0.6,0.6,0.6,1]);
+    this.mKeyNBar.setColor([0.447,0.286,0.219,1]);
     this.mKeyNBar.getXform().setPosition(310,10);
     this.mKeyNBar.getXform().setSize(100,1.5);
     this.mAllObjs.addToSet(this.mKeyNBar);
@@ -344,7 +357,7 @@ BalanceLevel.prototype.draw = function () {
 
     // Step  B: Activate the drawing Camera
    this.mCamera.setupViewProjection();
-    // Step  C: Draw all the squares
+   this.mbg.draw(this.mCamera);
    this.mStarset.draw(this.mCamera);
     this.mBlackHoleset.draw(this.mCamera);
     this.mToothset.draw(this.mCamera);
@@ -353,6 +366,7 @@ BalanceLevel.prototype.draw = function () {
     this.mOtherObjs.draw(this.mCamera);
     
     this.mCamera2.setupViewProjection();
+    this.mbg.draw(this.mCamera2);
     this.mStarset.draw(this.mCamera2);
     this.mBlackHoleset.draw(this.mCamera2);
     this.mToothset.draw(this.mCamera2);
@@ -472,6 +486,7 @@ BalanceLevel.prototype.update = function () {
             this.starcount++;
             this.mStarset.getObjectAt(i).setVisibility(false);
             this.mStarset.removeFromSet(this.mStarset.getObjectAt(i));
+            gEngine.AudioClips.playACue(this.kCue);
         }
     }
     

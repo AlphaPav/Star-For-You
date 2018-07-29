@@ -17,7 +17,7 @@ function MapObject(xPos,yPos,Degree,Width,Height,TexturePath){
     
     if(this.kTexture===null){
         this.object=new Renderable(gEngine.DefaultResources.getConstColorShader());
-        this.object.setColor([0,0,0,1]);
+        this.object.setColor([0.447,0.286,0.219,1]);
         this.object.getXform().setPosition(this.xPos,this.yPos);
         this.object.getXform().setRotationInDegree(this.degree);
         this.object.getXform().setSize(this.width,this.height);
@@ -36,13 +36,13 @@ function MapObject(xPos,yPos,Degree,Width,Height,TexturePath){
         var r = new RigidRectangle(this.getXform(), Width, Height);
         r.setMass(0);
         this.setRigidBody(r);
-      //  this.toggleDrawRigidShape();
+    //    this.toggleDrawRigidShape();
     }
     else{
         var r = new RigidCircle(this.getXform(), Width*0.5);
         r.setMass(0);
         this.setRigidBody(r);
-       // this.toggleDrawRigidShape();
+   //     this.toggleDrawRigidShape();
     }
 
 }

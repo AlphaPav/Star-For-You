@@ -18,6 +18,8 @@ function StartScene() {
     
     this.kSprite = "assets/animation.png";
     this.kStar = "assets/yellow.png";
+    this.kbg ="assets/bg1.png";
+    this.kBGM = "assets/Lopu.mp3";
     // The camera to view the scene
     this.mCamera = null;
     this.mAllObjs = null;
@@ -30,6 +32,8 @@ function StartScene() {
     this.time= 0;
     this.LastSpaceTime=0;
     this.SpaceCount=0;
+    
+
 }
 
 gEngine.Core.inheritPrototype(StartScene, Scene);
@@ -38,18 +42,22 @@ gEngine.Core.inheritPrototype(StartScene, Scene);
 StartScene.prototype.loadScene = function () {
      
     gEngine.Textures.loadTexture(this.kSprite);
-
+     gEngine.Textures.loadTexture(this.kbg);
     gEngine.Textures.loadTexture(this.kStar);
+    gEngine.AudioClips.loadAudio(this.kBGM);
+    
+
 };
 
 StartScene.prototype.unloadScene = function () {
     
     gEngine.Textures.unloadTexture(this.kSprite);
+ gEngine.Textures.unloadTexture(this.kbg);
 
     gEngine.Textures.unloadTexture(this.kStar);
    //  var nextLevel =new MyGame();
-    var nextLevel =new Level1();
-    //var nextLevel =new Level3();
+   // var nextLevel =new Level1();
+    var nextLevel =new AllLevel(0);
     gEngine.Core.startScene(nextLevel);
 };
 
@@ -62,9 +70,17 @@ StartScene.prototype.initialize = function () {
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
     
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+
 
             // sets the background to gray
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
+    
+    
+    
+    this.mbg = new TextureRenderable(this.kbg);
+    this.mbg.getXform().setPosition(400,300);
+    this.mbg.getXform().setSize(800,600);
     
     this.mAllObjs = new GameObjectSet(); 
     
@@ -73,9 +89,9 @@ StartScene.prototype.initialize = function () {
     this.mAllObjs.addToSet(this.mHero);
     
     this.mMsg = new FontRenderable("Star For You");
-    this.mMsg.setColor([0, 0, 0, 1]);
+    this.mMsg.setColor([1,1,1, 1]);
     this.mMsg.getXform().setPosition(310,350);
-    this.mMsg.setTextHeight(25);
+    this.mMsg.setTextHeight(30);
     this.mAllObjs.addToSet(this.mMsg);
     
     this.mStar = new TextureRenderable(this.kStar);
@@ -86,13 +102,13 @@ StartScene.prototype.initialize = function () {
     
     
     this.mTip = new FontRenderable("Hold [SPACE] to start");
-    this.mTip.setColor([0.6,0.6,0.6, 1]);
+    this.mTip.setColor([1,1,1, 1]);
     this.mTip.getXform().setPosition(305,100);
     this.mTip.setTextHeight(16);
     this.mAllObjs.addToSet(this.mTip);
     
     this.mBar =new Renderable();
-    this.mBar.setColor([0.6,0.6,0.6,  1]);
+    this.mBar.setColor([1,1,1,  1]);
     this.mBar.getXform().setPosition(400,80);
     this.mBar.getXform().setSize(200,3);
     this.mAllObjs.addToSet(this.mBar);
@@ -106,6 +122,7 @@ StartScene.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
+    this.mbg.draw(this.mCamera);
     this.mAllObjs.draw(this.mCamera);
     
 };

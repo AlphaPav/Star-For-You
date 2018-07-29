@@ -106,9 +106,14 @@
         <script type="text/javascript" src="src/MyGame/BalanceLevel.js"></script>
         <script type="text/javascript" src="src/MyGame/Level2_3.js"></script>
         <script type="text/javascript" src="src/MyGame/Level3.js"></script>
+        <script type="text/javascript" src="src/MyGame/Level6.js"></script>
         <script type="text/javascript" src="src/MyGame/EndScene.js"></script>
         <script type="text/javascript" src="src/MyGame/LoseScene.js"></script>
         <script type="text/javascript" src="src/MyGame/MyGame_Bounds.js"></script>
+        <script type="text/javascript" src="src/MyGame/Level5.js"></script>
+        <script type="text/javascript" src="src/MyGame/PassScene.js"></script>
+        <script type="text/javascript" src="src/MyGame/AllLevel.js"></script>
+        <script type="text/javascript" src="src/MyGame/Level4.js"></script>
         
         <script type="text/javascript" src="src/MyGame/Objects/Chaser.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/Hero.js"></script>
@@ -119,14 +124,17 @@
         <script type="text/javascript" src="src/MyGame/Objects/Item.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/Star.js"></script>
         <script type="text/javascript" src="src/MyGame/Objects/Spring.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Ray.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Level4Hero.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Level4Platform.js"></script>
         
         <link rel="stylesheet" type="text/css" href="LoadingIcons.css">
         
     </head>
 
     <body onload="
+        //var startScene = new StartScene();
         var startScene = new StartScene();
-       // var startScene = new Level3();
         gEngine.Core.initializeEngineCore('GLCanvas', startScene);
      ">
          <div class="container" id="LoadingIconParent" style="width: 800px; height:600px;">

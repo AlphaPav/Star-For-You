@@ -17,7 +17,9 @@ function MyGame() {
     this.kHole = "assets/Hole.png";
     this.kRubbish="assets/2D_GAME_rubbish.png";
     this.kStar = "assets/yellow.png";
-
+    this.kbg="assets/bgtest1.png";
+    this.kCue="assets/Star.wav";
+    this.kBGM = "assets/Lopu.mp3";
     // The camera to view the scene
     this.mCamera = null;
     this.mCamera2=null;
@@ -39,7 +41,7 @@ function MyGame() {
     this.flag=0;
     
     this.starcount = 0;
-    this.totalcount = 10;
+    this.totalcount = 14;
     
     this.restart = true;
     this.skip=false;
@@ -47,6 +49,10 @@ function MyGame() {
     this.time= 0;
     this.LastKeyNTime=0;
     this.KeyNCount=0;
+    
+    this.a=0;
+    this.b=0;
+    this.flag2=0;//0 for not begin
 }
 
 gEngine.Core.inheritPrototype(MyGame, Scene);
@@ -58,7 +64,10 @@ MyGame.prototype.loadScene = function () {
     gEngine.Textures.loadTexture(this.kHole);
     gEngine.Textures.loadTexture(this.kRubbish);
     gEngine.Textures.loadTexture(this.kStar);
-    
+     gEngine.Textures.loadTexture(this.kbg);
+     gEngine.AudioClips.loadAudio(this.kCue);
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+
 };
 
 MyGame.prototype.unloadScene = function () {
@@ -67,7 +76,10 @@ MyGame.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.kHole);
     gEngine.Textures.unloadTexture(this.kRubbish);
     gEngine.Textures.unloadTexture(this.kStar);
- 
+    gEngine.Textures.unloadTexture(this.kbg);
+    gEngine.AudioClips.unloadAudio(this.kCue);
+    gEngine.AudioClips.stopBackgroundAudio();
+    
     if(this.skip)
       {    gEngine.ResourceMap.loadstar("star",this.starcount);
           var nextLevel =new BalanceLevel();
@@ -109,10 +121,14 @@ MyGame.prototype.initialize = function () {
             vec2.fromValues(40,20),
             80,
             [0,540,120,60]);
-    this.mCui.setBackgroundColor([0.8,0.8,0.8,1]);
+    this.mCui.setBackgroundColor([0.705, 0.443, 0.341, 0.5 ]);
     
             // sets the background to gray
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
+    
+    this.mbg = new TextureRenderable(this.kbg);
+    this.mbg.getXform().setPosition(1000,300);
+    this.mbg.getXform().setSize(2000,600);
     
     this.mPlatformset = new GameObjectSet(); 
     this.mRubbishset = new GameObjectSet(); 
@@ -120,7 +136,7 @@ MyGame.prototype.initialize = function () {
     this.mAllObjs= new GameObjectSet(); 
     
     
-    this.mHero = new Hero(this.kSprite, 60,135,50,50);
+    this.mHero = new Hero(this.kSprite, 60,135,50,50,1024);
     this.mFirstObject = this.mPlatformset.size();
     this.mCurrentObj = this.mFirstObject;
     this.mPlatformset.addToSet(this.mHero);
@@ -143,37 +159,54 @@ MyGame.prototype.initialize = function () {
     this.platform1=new MapObject(100,100,0,200,16,null);
     this.mPlatformset.addToSet(this.platform1);
   
-    this.platform2=new MapObject(192,225,90,250,16,null);
+    this.platform2=new MapObject(192,225,0,16,250,null);
     this.mPlatformset.addToSet(this.platform2);
     
     this.platform3=new MapObject(250,342,0,100,16,null);
     this.mPlatformset.addToSet(this.platform3);
     
-    this.platform4=new MapObject(500,285,0,150,16,null);
+    this.platform4=new MapObject(505,285,0,150,16,null);
     this.mPlatformset.addToSet(this.platform4);
     
-    this.platform5=new MapObject(163,168,0,40,16,null);
+    this.platform5=new MapObject(165,168,0,40,16,null);
     this.mPlatformset.addToSet(this.platform5);
     
-    this.platform6=new MapObject(780,300,90,600,16,null);
+    this.platform6=new MapObject(780,300,0,16,600,null);
     this.mPlatformset.addToSet(this.platform6);
-    this.platform7=new MapObject(880,300,90,600,16,null);// right wall
+    this.platform7=new MapObject(880,300,0,16,600,null);// right wall
     this.mPlatformset.addToSet(this.platform7);
   
     var angle1 = Math.atan(140.0/50.0)*180*1.0/ 3.1415926;
     var len1= Math.sqrt(Math.pow(50,2)+Math.pow(300,2));
-    this.platform9=new MapObject(830,450,angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform9);
-    this.platform8=new MapObject(830,150,angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform8);
-    this.platform10=new MapObject(830,450,180-angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform10);
-    this.platform11=new MapObject(830,150,180-angle1,len1,16,null);
-    this.mPlatformset.addToSet(this.platform11);
-     this.platform12=new MapObject(830,300,0,100,16,null);
+   
+    this.platform9=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform9.setColor([0.447,0.286,0.219,1]);
+    this.platform9.getXform().setPosition(830,450);
+    this.platform9.getXform().setRotationInDegree(angle1);
+    this.platform9.getXform().setSize(len1,16);
+    
+    this.platform8=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform8.setColor([0.447,0.286,0.219,1]);
+    this.platform8.getXform().setPosition(830,150);
+    this.platform8.getXform().setRotationInDegree(angle1);
+    this.platform8.getXform().setSize(len1,16);
+    
+    this.platform10=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform10.setColor([0.447,0.286,0.219,1]);
+    this.platform10.getXform().setPosition(830,450);
+    this.platform10.getXform().setRotationInDegree(180-angle1);
+    this.platform10.getXform().setSize(len1,16);
+    
+    this.platform11=new Renderable(gEngine.DefaultResources.getConstColorShader());
+    this.platform11.setColor([0.447,0.286,0.219,1]);
+    this.platform11.getXform().setPosition(830,150);
+    this.platform11.getXform().setRotationInDegree(180-angle1);
+    this.platform11.getXform().setSize(len1,16);
+    
+    this.platform12=new MapObject(830,300,0,100,16,null);
     this.mPlatformset.addToSet(this.platform12);
 
-    this.platform13=new MapObject(-8,300,90,600,16,null);//left wall
+    this.platform13=new MapObject(-8,300,0,16,600,null);//left wall
     this.mPlatformset.addToSet(this.platform13);
     this.platform14=new MapObject(440,608,0,896,16,null);//top wall
     this.mPlatformset.addToSet(this.platform14);
@@ -182,8 +215,11 @@ MyGame.prototype.initialize = function () {
     //this.mHole.setBoundRadius(40);
     //this.mItemset.addToSet(this.mHole);
     
-    this.mRubbish=new Item(500,650,0,60,60,this.kRubbish);
+    this.mRubbish=new Item(450,650,0,60,60,this.kRubbish);
     this.mRubbishset.addToSet(this.mRubbish);
+    
+    this.mRubbish3 = new Item(520,-30,0,60,60,this.kRubbish);
+    this.mRubbishset.addToSet(this.mRubbish3);
     //this.createBounds();
     this.mRubbish2=new Item(250,430,0,50,50,this.kRubbish);
     this.mRubbishset.addToSet(this.mRubbish2);
@@ -200,13 +236,13 @@ MyGame.prototype.initialize = function () {
 MyGame.prototype.initializeKeyN= function(){
     
     this.mKeyNTip = new FontRenderable("Hold [N] to skip to Level2.2");
-    this.mKeyNTip.setColor([0.6,0.6,0.6, 1]);
+    this.mKeyNTip.setColor([0.447,0.286,0.219, 1]);
     this.mKeyNTip.getXform().setPosition(70,50);
     this.mKeyNTip.setTextHeight(14);
     this.mAllObjs.addToSet(this.mKeyNTip);
     
     this.mKeyNBar =new Renderable();
-    this.mKeyNBar.setColor([0.6,0.6,0.6,1]);
+    this.mKeyNBar.setColor([0.447,0.286,0.219, 1]);
     this.mKeyNBar.getXform().setPosition(185,30);
     this.mKeyNBar.getXform().setSize(200,3);
     this.mAllObjs.addToSet(this.mKeyNBar);
@@ -218,17 +254,27 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
+    this.mbg.draw(this.mCamera);
     this.mRubbishset.draw(this.mCamera);
     this.mStarset.draw(this.mCamera);
     this.mPlatformset.draw(this.mCamera);
     this.mHole.draw(this.mCamera);
     this.mAllObjs.draw(this.mCamera); 
+    this.platform8.draw(this.mCamera);
+    this.platform9.draw(this.mCamera);
+    this.platform10.draw(this.mCamera);
+    this.platform11.draw(this.mCamera);
     
     this.mCamera2.setupViewProjection();
+    this.mbg.draw(this.mCamera2);
     this.mPlatformset.draw(this.mCamera2);
     this.mRubbishset.draw(this.mCamera2);
     this.mStarset.draw(this.mCamera2);
     this.mHole.draw(this.mCamera2);
+    this.platform8.draw(this.mCamera2);
+    this.platform9.draw(this.mCamera2);
+    this.platform10.draw(this.mCamera2);
+    this.platform11.draw(this.mCamera2);
     
     this.mCui.setupViewProjection();
     this.mMsg.draw(this.mCui); //mcamera->canvus? 
@@ -283,7 +329,7 @@ MyGame.prototype.update = function () {
 
     var obj = this.mPlatformset.getObjectAt(this.mCurrentObj);
     
-    obj.keyControl();
+    obj.keyControl(this.mPlatformset,null,300);
     obj.getRigidBody().userSetsState();
     
     this.mPlatformset.update(this.mCamera);
@@ -295,13 +341,16 @@ MyGame.prototype.update = function () {
     this.mRubbishset.update(this.mCamera2);
     this.mStarset.update(this.mCamera2);
     
-    if(this.mHero.getXform().getPosition()[0]>=350){
-        this.mRubbish.getXform().incYPosBy(-2.5);
+    this.a=this.a+0.01;
+
+    if(this.mHero.getXform().getPosition()[0]>=420){
+        this.flag2=1;
     }
-    /*if(this.mHero.getXform().getPosition()[0]>=550){
-        this.mRubbish.getXform().setPosition(500,650);
-    }*/
-    
+    if(this.flag2===1){
+        this.mRubbish.getXform().incYPosBy(-this.a);
+        this.mRubbish3.getXform().incYPosBy(this.a);
+    }
+
 //change the rubbish2 's size
     if(this.size===0){
         this.flag=1;
@@ -349,6 +398,7 @@ MyGame.prototype.update = function () {
             this.starcount++;
             this.mStarset.getObjectAt(i).setVisibility(false);
             this.mStarset.removeFromSet(this.mStarset.getObjectAt(i));
+            gEngine.AudioClips.playACue(this.kCue);
         }
     }
     

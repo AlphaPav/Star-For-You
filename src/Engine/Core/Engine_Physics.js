@@ -34,6 +34,7 @@ gEngine.Physics = (function () {
     var mHasMotion = true;
     
     var getSystemtAcceleration = function() { return mSystemtAcceleration; };
+    var setSystemtAcceleration = function(a){ mSystemtAcceleration = [0,-a]; };
     
     var togglePositionalCorrection = function() {
         mCorrectPosition = !mCorrectPosition;
@@ -195,7 +196,8 @@ gEngine.Physics = (function () {
         incRelaxationCount: incRelaxationCount,
         getRelaxationCount: getRelaxationCount,
         getHasMotion: getHasMotion,
-        toggleHasMotion: toggleHasMotion
+        toggleHasMotion: toggleHasMotion,
+        setSystemtAcceleration:setSystemtAcceleration
     };
     return mPublic;
 }());
