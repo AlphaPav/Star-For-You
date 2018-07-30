@@ -115,7 +115,7 @@ Hero.prototype.update = function () {
     GameObject.prototype.update.call(this);
 };
 
-Hero.prototype.updateChaser = function (set) {
+Hero.prototype.updateChaser = function (set,stop) {
     GameObject.prototype.update.call(this);
     var i, obj;
     var heroBounds = this.getBBox();
@@ -123,26 +123,27 @@ Hero.prototype.updateChaser = function (set) {
     for (i=0; i<set.size(); i++) {
         obj = set.getObjectAt(i);
         obj.rotateObjPointTo(p, 0.8);
-        if (obj.getBBox().intersectsBound(heroBounds)) {
-            gEngine.GameLoop.stop();
+        if (obj.boundTest(this)&&stop===1) {
+//            gEngine.GameLoop.stop();
+            //console.log(1);
+            return 1;
+        }
+		else if(obj.boundTest(this)&&stop===0){
+            set.removeFromSet(obj);
+            return 1;
         }
     }
+    return 0;
 };
 
 Hero.prototype.CheckUpdate_Platform=function(Object,dir,rate){
-    this.mObject=Object;
     this.mDir=dir;//0 for x; 1 for y
     this.mRate=rate;
     var flag=0;//0 for no collision
-    this.mObjectPos=this.mObject.getXform();
     
-    if((this.getXform().getYPos()-this.mHeight/2)<=(this.mObjectPos.getYPos()+this.mObjectPos.getHeight()/2)
-            &&(this.getXform().getXPos()+this.mWidth/2)>(this.mObjectPos.getXPos()-this.mObjectPos.getWidth()/2)
-            &&(this.getXform().getXPos()-this.mWidth/2)<(this.mObjectPos.getXPos()+this.mObjectPos.getWidth()/2)
-            &&(this.getXform().getYPos()+this.mHeight/2)>=(this.mObjectPos.getYPos()-this.mObjectPos.getHeight()/2)){
+    if(this.CheckUpdate_Collision(Object)){
         flag=1;
     }
-    //console.log(flag);
     if(flag===1&&this.mDir===0){
         this.getXform().incXPosBy(this.mRate);
     }
@@ -150,8 +151,14 @@ Hero.prototype.CheckUpdate_Platform=function(Object,dir,rate){
         this.getXform().incYPosBy(this.mRate);
     }
 };
-Hero.prototype.CheckUpdate_Collision=function(){
-    
+Hero.prototype.CheckUpdate_Collision=function(Object){
+    this.mObjectPos=Object.getXform();
+    if((this.getXform().getYPos()-this.mHeight/2)<=(this.mObjectPos.getYPos()+this.mObjectPos.getHeight()/2)
+            &&(this.getXform().getXPos()+this.mWidth/2-3)>(this.mObjectPos.getXPos()-this.mObjectPos.getWidth()/2)
+            &&(this.getXform().getXPos()-this.mWidth/2+3)<(this.mObjectPos.getXPos()+this.mObjectPos.getWidth()/2)
+            &&(this.getXform().getYPos()+this.mHeight/2)>=(this.mObjectPos.getYPos()-this.mObjectPos.getHeight()/2)){
+        return 1;//for collision
+    }
 };
 Hero.prototype.StartSceneautomove= function(){
 

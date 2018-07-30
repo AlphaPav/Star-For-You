@@ -200,19 +200,16 @@ Ray.prototype.AllDicFirstCal = function()
 };
 
 Ray.prototype.alloutput= function(){
-    console.log("hero");
-    console.log("Minx:"+this.mHeroMinX);
-    console.log("Maxx:"+this.mHeroMaxX);
-    console.log("MinY:"+this.mHeroMinY);
-    console.log("MaxY:"+this.mHeroMaxY);
+  
     var i;
-     console.log("mPlatformsetIncOrderMinX") ;
+     
     for(i=0;i<this.mPlatformsetIncOrderMinX.size();i++){
         this.myoutput(this.mPlatformsetIncOrderMinX.getObjectAt(i)); }
     
-    console.log("this.mPlatformset") ;
+ 
+ 
     for(i=1;i<this.mPlatformset.size();i++){
-        console.log("originalindex:"+i);
+  
         this.myoutput1(this.mPlatformset.getObjectAt(i)); }
    /* 
        console.log("this.mPlatformsetDecOrderMaxX") ;

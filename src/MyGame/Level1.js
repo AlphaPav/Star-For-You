@@ -24,9 +24,12 @@ function Level1() {
     this.kCue="assets/Star.wav";
     this.kbg="assets/bgtest1.png";
     this.kBGM = "assets/Lopu.mp3";
+    this.kback="assets/back.png";
+    this.krestart="assets/restart.png";
     // The camera to view the scene
     this.mCamera = null;
     this.mCamera2=null;
+    this.mCdead=null;
     
     this.mPlatformset = null;
     this.mRubbishset = null;
@@ -48,6 +51,7 @@ function Level1() {
     this.starcount = 0;
     this.totalcount = 10;
     
+    this.died=0;
         
     this.mKeyNBar= null;
     this.time= 0;
@@ -60,6 +64,7 @@ function Level1() {
     this.FalgPlatform16= 0; //go down;
     this.FalgPlatform23= 0; //go right;
     this.FalgPlatform24= 0; //go down;
+ 	this.previousstarcount=0;
 }
 
 gEngine.Core.inheritPrototype(Level1, Scene);
@@ -77,7 +82,15 @@ Level1.prototype.loadScene = function () {
     gEngine.Textures.loadTexture(this.kkeySpace);
     gEngine.AudioClips.loadAudio(this.kCue);
     gEngine.Textures.loadTexture(this.kbg);
-    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+    gEngine.Textures.loadTexture(this.kback);
+    gEngine.Textures.loadTexture(this.krestart);
+    //gEngine.AudioClips.playBackgroundAudio(this.kBGM);
+
+    if(gEngine.ResourceMap.isAssetLoaded("level1")){
+        //this.mCui = gEngine.ResourceMap.retrieveAsset("Cui");
+        this.previousstarcount = gEngine.ResourceMap.retrieveAsset("level1");
+    }
+    
 };
 
 Level1.prototype.unloadScene = function () {
@@ -90,14 +103,16 @@ Level1.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.kkeyLeft);
     gEngine.Textures.unloadTexture(this.kkeyRight);
     gEngine.Textures.unloadTexture(this.kkeySpace);
-    gEngine.AudioClips.stopBackgroundAudio();
+    //gEngine.AudioClips.stopBackgroundAudio();
     gEngine.AudioClips.unloadAudio(this.kCue);
      gEngine.Textures.unloadTexture(this.kbg);
+     gEngine.Textures.unloadTexture(this.kback);
+    gEngine.Textures.unloadTexture(this.krestart);
    
     if(this.skip){
-        //var nextLevel =new MyGame();
-        var nextLevel =new PassScene(1,this.starcount);
-        gEngine.ResourceMap.loadstar("level1",this.starcount);
+        var nextLevel =new MyGame();
+        //var nextLevel =new PassScene(1,this.starcount);
+        gEngine.ResourceMap.loadstar("level1",10);
         gEngine.Core.startScene(nextLevel);
      }
     else{
@@ -106,7 +121,9 @@ Level1.prototype.unloadScene = function () {
             gEngine.Core.startScene(nextLevel);
         }
         else{   
-                gEngine.ResourceMap.loadstar("level1",this.starcount);
+                if(this.starcount>this.previousstarcount){
+                  gEngine.ResourceMap.loadstar("level1",this.starcount);
+              }
                 var nextLevel =new PassScene(1,this.starcount);
                 gEngine.Core.startScene(nextLevel);
             
@@ -137,12 +154,19 @@ Level1.prototype.initialize = function () {
     );
     this.mCamera2.setBackgroundColor([0.8, 0.8, 0.8, 1]); 
         
+     
     this.mCui = new Camera(
-            vec2.fromValues(40,20),
-            80,
-            [0,540,120,60]);
-    this.mCui.setBackgroundColor([0.705, 0.443, 0.341, 0.5 ]);
+            vec2.fromValues(this.mCamera.mCameraState.getCenter()[0]-370, this.mCamera.mCameraState.getCenter()[1]+270),
+            60,
+            [0,510,90,90]);
+ 
     
+    this.mCdead = new Camera(
+            this.mCamera.mCameraState.getCenter(),
+            400,
+            [200,150,400,300]);
+    this.mCdead.setBackgroundColor([0.705, 0.443, 0.341, 0.5 ]);
+       
             // sets the background to gray
     gEngine.DefaultResources.setGlobalAmbientIntensity(3);
     
@@ -154,25 +178,60 @@ Level1.prototype.initialize = function () {
     this.mStarset = new GameObjectSet(); 
     
     this.initializePlatform();
-    this.mMsg = new FontRenderable("0/8");
-    this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(43,27);
-    this.mMsg.setTextHeight(15);
-    
-    this.mStaritem = new TextureRenderable(this.kStar);
-    this.mStaritem.setColor([1,1,1,0]);
-    this.mStaritem.getXform().setPosition(20,24);
-    this.mStaritem.getXform().setSize(30,30);
     this.mMsg2 = new FontRenderable("Level 1");
-    this.mMsg2.setColor([0, 0, 0, 1]);
-    this.mMsg2.getXform().setPosition(20,9);
-    this.mMsg2.setTextHeight(11);
+    this.mMsg2.setColor([222/255, 212/255, 173/255, 1]);
+    this.mMsg2.getXform().setPosition(10,50);
+    this.mMsg2.setTextHeight(12);
     
+    this.mMsg3 = new FontRenderable("Target:6");
+    this.mMsg3.setColor([0.2,0.2,0.2, 1]);
+    this.mMsg3.getXform().setPosition(7,22);
+    this.mMsg3.setTextHeight(10);
+    this.mMsg4 = new FontRenderable("Total :10");
+    this.mMsg4.setColor([0.2,0.2,0.2, 1]);
+    this.mMsg4.getXform().setPosition(7,10);
+    this.mMsg4.setTextHeight(10);
+    
+    this.mMsg = new FontRenderable("Now   :0");
+    this.mMsg.setColor([0.2,0.2,0.2, 1]);
+    this.mMsg.getXform().setPosition(8,33);
+    this.mMsg.setTextHeight(10);
+
+    
+    this.initializeCameraDead();
     this.initializeStar();
     this.initializeTooth();
     this.mDoor=new Item(1950,510,0,100,100,this.kDoor);
     this.initializeGuideobj();
     this.initializeKeyN();
+};
+Level1.prototype.initializeCameraDead = function(){
+    this.mDeadset=new GameObjectSet();
+    
+    
+//    this.mbg = new TextureRenderable(this.kbg);
+//    this.mbg.getXform().setPosition(1000,300);
+//    this.mbg.getXform().setSize(2000,600);
+    this.mDeadset.addToSet(this.mbg);
+    
+    this.mMsgDead = new FontRenderable("Ooops, you died :(");
+    this.mMsgDead.setColor([1,1,1, 1]);
+    this.mMsgDead.getXform().setPosition(this.mCdead.getWCCenter()[0]-140,this.mCdead.getWCCenter[1]+80);
+    this.mMsgDead.setTextHeight(30);   
+    this.mDeadset.addToSet(this.mMsgDead);
+    
+    this.restartbutton = new TextureRenderable(this.krestart);
+    this.restartbutton.setColor([1,1,1,0]);
+    this.restartbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter[1]-20);
+    this.restartbutton.getXform().setSize(128,64);
+    this.mDeadset.addToSet(this.restartbutton);
+    
+    this.backtbutton = new TextureRenderable(this.kback);
+    this.backtbutton.setColor([1,1,1,0]);
+    this.backtbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter[1]-100);
+    this.backtbutton.getXform().setSize(128,64);
+    this.mDeadset.addToSet(this.backtbutton);
+    
 };
 Level1.prototype.initializeKeyN = function(){
     
@@ -355,16 +414,42 @@ Level1.prototype.draw = function () {
     this.mDoor.draw(this.mCamera2);
     
     this.mCui.setupViewProjection();
-    this.mMsg.draw(this.mCui); //mcamera->canvus?
+   this.mbg.draw(this.mCui);
+    this.mMsg.draw(this.mCui); 
     this.mMsg2.draw(this.mCui);
-    this.mStaritem.draw(this.mCui);
-
+    this.mMsg3.draw(this.mCui);
+    this.mMsg4.draw(this.mCui);
+    
+    if(this.died===1)
+    {
+        
+        this.mCdead.setupViewProjection();
+        this.mDeadset.draw(this.mCdead);
+        //console.log(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]);
+    }
     this.mCollisionInfos = []; 
     
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
+Level1.prototype.updatemCui= function(){
+    var newcenterx =this.mCamera.mCameraState.getCenter()[0]-370 ;
+    var newcentery=this.mCamera.mCameraState.getCenter()[1]+270;
+   
+     
+    this.mCui.setWCCenter(newcenterx,newcentery);  
+
+    this.mMsg2.getXform().setPosition(this.mCui.getWCCenter()[0]-20,this.mCui.getWCCenter()[1]+20);
+
+    this.mMsg3.getXform().setPosition(this.mCui.getWCCenter()[0]-23,this.mCui.getWCCenter()[1]-8);
+
+    this.mMsg4.getXform().setPosition(this.mCui.getWCCenter()[0]-23,this.mCui.getWCCenter()[1]-20);
+  
+    this.mMsg.getXform().setPosition(this.mCui.getWCCenter()[0]-22,this.mCui.getWCCenter()[1]+3);
+    
+    //this.mCui.mCameraState.updateCameraState();
+};
 
 Level1.prototype.updatePlatformMovingObjs=function(){
     if (this.FalgPlatform8===0) // left and right
@@ -445,7 +530,11 @@ Level1.prototype.update = function () {
         this.mCamera.setWCCenter(1600,300);
     }
     this.mCamera.update();
-     this.time++;
+   
+ 	this.updatemCui();
+    this.mCui.update();
+    
+    this.time++;
     var flag =0;
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.N)) 
     {
@@ -473,8 +562,9 @@ Level1.prototype.update = function () {
     this.mKeyNset.update(this.mCamera);
     
     var obj = this.mPlatformset.getObjectAt(this.mCurrentObj);
-    
+    if(this.died===0){
     obj.keyControl(this.mPlatformset,null,300);
+    }
     obj.getRigidBody().userSetsState();
     
     this.updatePlatformMovingObjs();
@@ -485,12 +575,14 @@ Level1.prototype.update = function () {
     this.mPlatformset.update(this.mCamera2);
     this.mRubbishset.update(this.mCamera2);
     this.mStarset.update(this.mCamera2);
-   
+    this.updateCameradead();
+    
     gEngine.Physics.processCollision(this.mPlatformset, this.mCollisionInfos);
 
     if(this.mHero.getXform().getYPos()<0){
-        this.restart = true;
-        gEngine.GameLoop.stop();
+        this.died=1;
+        //this.restart = true;
+        //gEngine.GameLoop.stop();
     }
 
   
@@ -498,8 +590,9 @@ Level1.prototype.update = function () {
     var i;
     for(i=0;i<this.mRubbishset.size();i++){
         if(this.mHero.boundTest(this.mRubbishset.getObjectAt(i),h)){
-            this.restart = true;
-            gEngine.GameLoop.stop();
+            this.died=1;
+            //this.restart = true;
+            //gEngine.GameLoop.stop();
         }
     }
     
@@ -519,16 +612,65 @@ Level1.prototype.update = function () {
     var i;
     for(i=0;i<this.mToothset.size();i++){
         if(this.mHero.boundTest(this.mToothset.getObjectAt(i),h)){
-            this.restart = true;
-            gEngine.GameLoop.stop();
+            this.died=1;
+            //this.restart = true;
+            //gEngine.GameLoop.stop();
         }
     }
     
-    var msg = this.starcount + "/" + this.totalcount;
+    var msg ="Now   :"+this.starcount;
     this.mMsg.setText(msg);
     
     if(this.mHero.boundTest(this.mDoor)){
         this.restart=false;
         gEngine.GameLoop.stop();
      }
+};
+
+
+Level1.prototype.updateCameradead = function () {
+    this.mDeadset.update();
+    this.mCdead.setWCCenter(this.mCamera.getWCCenter()[0],this.mCamera.getWCCenter()[1]);
+    this.mMsgDead.getXform().setPosition(this.mCdead.getWCCenter()[0]-140,this.mCdead.getWCCenter()[1]+80);
+    //console.log(this.mMsgDead.getXform().getPosition());
+    this.restartbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-20);
+    this.backtbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-100);
+   
+    var mx,my,rxf,bxf;
+   
+    mx=gEngine.Input.getMousePosX();
+    my=gEngine.Input.getMousePosY();
+    rxf=this.restartbutton.getXform();
+    bxf=this.backtbutton.getXform();
+   
+    if(this.died===1)
+    {
+        if(mx<400+rxf.getWidth()/2&&mx>400-rxf.getWidth()/2
+                &&my<rxf.getYPos()+rxf.getHeight()/2&&my>rxf.getYPos()-rxf.getHeight()/2)
+        {
+            this.restartbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-25);
+            if(gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left))
+            {   
+                this.restart=true;            
+                gEngine.GameLoop.stop();
+            }
+        }
+        else{
+            this.restartbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-20);
+        }
+        if(mx<400+bxf.getWidth()/2&&mx>400-bxf.getWidth()/2
+                &&my<bxf.getYPos()+bxf.getHeight()/2&&my>bxf.getYPos()-bxf.getHeight()/2)
+        {
+            this.backtbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-105);
+            if(gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left))
+            {   
+                this.restart=false;            
+                gEngine.GameLoop.stop();
+            }
+        }
+        else{
+            this.backtbutton.getXform().setPosition(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]-100);
+        }
+    }
+    
 };

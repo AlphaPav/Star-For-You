@@ -49,3 +49,6 @@ function MapObject(xPos,yPos,Degree,Width,Height,TexturePath){
 gEngine.Core.inheritPrototype(MapObject,GameObject);
 
 
+MapObject.prototype.mySetcolor = function () {
+    this.object.setColor([0,0,0,1]);
+};

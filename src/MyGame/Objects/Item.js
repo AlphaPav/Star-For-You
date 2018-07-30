@@ -13,6 +13,7 @@ function Item(xPos,yPos,Degree,Width,Height,TexturePath){
     this.height=Height;
     this.kTexture=TexturePath;
     this.setBoundRadius(Width/2);
+	this.dir=0;//0 for right
     
     this.object=null;
     

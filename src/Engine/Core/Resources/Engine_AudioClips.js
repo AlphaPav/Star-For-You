@@ -112,7 +112,7 @@ gEngine.AudioClips = (function () {
         var clipInfo = gEngine.ResourceMap.retrieveAsset(clipName);
         if (clipInfo !== null) {
             // Stop audio if playing.
-            stopBackgroundAudio();
+            //stopBackgroundAudio();
 
             mBgAudioNode = mAudioContext.createBufferSource();
             mBgAudioNode.buffer = clipInfo;
