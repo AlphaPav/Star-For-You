@@ -161,7 +161,7 @@ Hero.prototype.StartSceneautomove= function(){
             this.mHero.setposition(1024,0);
         }
         else{
-            this.mHero.setposition(424,0);
+            this.mHero.setposition(422,0);
         }
         this.mHero.updateAnimation();
         this.count=this.count+1;
