@@ -304,7 +304,7 @@ Level3.prototype.update=function(){
     if(this.mHero.getXform().getXPos()<700){
         this.timeLaunch++;    
         if(this.timeLaunch === 100){
-            var c = new Chaser(this.kRubbish,this.mRubbish.getXform().getXPos(),this.mRubbish.getXform().getYPos(),30,30,3,1000);
+            var c = new Chaser(this.kRubbish,this.mRubbish.getXform().getXPos(),this.mRubbish.getXform().getYPos(),30,30,2,1000);
             this.mChaserSet.addToSet(c);
             this.timeLaunch=0;
         }

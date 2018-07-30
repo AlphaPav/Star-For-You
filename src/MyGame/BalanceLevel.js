@@ -237,19 +237,19 @@ BalanceLevel.prototype.initializeBlackHole= function(){
     this.mBlackHoleset.addToSet(this.mBH11);    
 };
 BalanceLevel.prototype.initializeTooth= function(){
-    this.mToothset = new GameObjectSet(); 
+  this.mToothset = new GameObjectSet(); 
     
-    this.mTooth=new Item(245,100,0,10,10,this.kTooth);
+    this.mTooth=new Item(247.5,100,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth);
-    this.mTooth1=new Item(245,110,0,10,10,this.kTooth);
+    this.mTooth1=new Item(247.5,115,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth1);
-    this.mTooth2=new Item(245,120,0,10,10,this.kTooth);
+    this.mTooth2=new Item(247.5,130,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth2);
-    this.mTooth3=new Item(245,130,0,10,10,this.kTooth);
+    this.mTooth3=new Item(247.5,145,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth3);
-    this.mTooth4=new Item(245,140,0,10,10,this.kTooth);
+    this.mTooth4=new Item(247.5,70,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth4);
-    this.mTooth5=new Item(245,150,0,10,10,this.kTooth);
+    this.mTooth5=new Item(247.5,85,0,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth5);    
     
     this.mTooth6=new Item(247.5,200,0,15,15,this.kTooth);
@@ -283,17 +283,17 @@ BalanceLevel.prototype.initializeTooth= function(){
     this.mToothset.addToSet(this.mTooth32);  
     
     
-    this.mTooth12=new Item(555,430,180,10,10,this.kTooth);
+    this.mTooth12=new Item(552.5,370,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth12);
-    this.mTooth13=new Item(555,440,180,10,10,this.kTooth);
+    this.mTooth13=new Item(552.5,385,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth13);
-    this.mTooth14=new Item(555,450,180,10,10,this.kTooth);
+    this.mTooth14=new Item(552.5,400,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth14);
-    this.mTooth15=new Item(555,460,180,10,10,this.kTooth);
+    this.mTooth15=new Item(552.5,415,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth15);
-    this.mTooth16=new Item(555,470,180,10,10,this.kTooth);
+    this.mTooth16=new Item(552.5,430,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth16);
-    this.mTooth17=new Item(555,480,180,10,10,this.kTooth);
+    this.mTooth17=new Item(552.5,445,180,15,15,this.kTooth);
     this.mToothset.addToSet(this.mTooth17);    
     
     
