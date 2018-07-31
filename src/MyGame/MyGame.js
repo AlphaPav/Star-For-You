@@ -274,7 +274,7 @@ MyGame.prototype.initializeCameraDead = function(){
 //    this.mbg = new TextureRenderable(this.kbg);
 //    this.mbg.getXform().setPosition(1000,300);
 //    this.mbg.getXform().setSize(2000,600);
-    this.mDeadset.addToSet(this.mbg);
+    //this.mDeadset.addToSet(this.mbg);
     
     this.mMsgDead = new FontRenderable("Ooops, you died :(");
     this.mMsgDead.setColor([1,1,1, 1]);
@@ -351,6 +351,16 @@ MyGame.prototype.draw = function () {
     {
         
         this.mCdead.setupViewProjection();
+        this.mbg.draw(this.mCdead);
+    this.mRubbishset.draw(this.mCdead);
+    this.mStarset.draw(this.mCdead);
+    this.mPlatformset.draw(this.mCdead);
+    this.mHole.draw(this.mCdead);
+    this.mAllObjs.draw(this.mCdead); 
+    this.platform8.draw(this.mCdead);
+    this.platform9.draw(this.mCdead);
+    this.platform10.draw(this.mCdead);
+    this.platform11.draw(this.mCdead);
         this.mDeadset.draw(this.mCdead);
         //console.log(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]);
     }

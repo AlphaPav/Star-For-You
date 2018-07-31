@@ -248,7 +248,7 @@ Level6_2.prototype.initializeCameraDead = function(){
 //    this.mbg = new TextureRenderable(this.kbg);
 //    this.mbg.getXform().setPosition(1000,300);
 //    this.mbg.getXform().setSize(2000,600);
-    this.mDeadset.addToSet(this.mBackground);
+    //this.mDeadset.addToSet(this.mBackground);
     
     this.mMsgDead = new FontRenderable("Ooops, you died :(");
     this.mMsgDead.setColor([1,1,1, 1]);
@@ -413,6 +413,21 @@ Level6_2.prototype.draw=function(){
     {
         
         this.mCdead.setupViewProjection();
+        this.mBackground.draw(this.mCdead);
+    this.mStarSet.draw(this.mCdead);
+    this.mPlatformSet.draw(this.mCdead);
+    this.mChaserSet.draw(this.mCdead);
+    this.mRubbishSet.draw(this.mCdead);
+    this.mToothSet1.draw(this.mCdead);
+    this.mToothSet2.draw(this.mCdead);
+    this.mToothSet3.draw(this.mCdead);
+    this.mAllObjs.draw(this.mCdead);
+    if(this.HoleFlag===1){
+        this.mBlackHole.draw(this.mCdead);
+    }
+    this.mDoor.draw(this.mCdead);
+    this.mShootingSet.draw((this.mCdead));
+    
         this.mDeadset.draw(this.mCdead);
         //console.log(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]);
     }

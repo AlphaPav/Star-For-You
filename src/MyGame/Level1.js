@@ -212,7 +212,7 @@ Level1.prototype.initializeCameraDead = function(){
 //    this.mbg = new TextureRenderable(this.kbg);
 //    this.mbg.getXform().setPosition(1000,300);
 //    this.mbg.getXform().setSize(2000,600);
-    this.mDeadset.addToSet(this.mbg);
+    //this.mDeadset.addToSet(this.mbg);
     
     this.mMsgDead = new FontRenderable("Ooops, you died :(");
     this.mMsgDead.setColor([1,1,1, 1]);
@@ -424,8 +424,17 @@ Level1.prototype.draw = function () {
     {
         
         this.mCdead.setupViewProjection();
-        this.mDeadset.draw(this.mCdead);
+        this.mbg.draw(this.mCdead);
         //console.log(this.mCdead.getWCCenter()[0],this.mCdead.getWCCenter()[1]);
+        this.mPlatformset.draw(this.mCdead);
+        this.mRubbishset.draw(this.mCdead);
+        this.mStarset.draw(this.mCdead);
+        this.mToothset.draw(this.mCdead);
+        this.mDoor.draw(this.mCdead);
+        this.mguideset.draw(this.mCdead);
+    this.mKeyNset.draw(this.mCdead);
+    this.mguideMsg1.draw(this.mCdead);
+        this.mDeadset.draw(this.mCdead);
     }
     this.mCollisionInfos = []; 
     
