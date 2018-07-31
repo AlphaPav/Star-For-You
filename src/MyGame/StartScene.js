@@ -45,6 +45,7 @@ StartScene.prototype.loadScene = function () {
      gEngine.Textures.loadTexture(this.kbg);
     gEngine.Textures.loadTexture(this.kStar);
     gEngine.AudioClips.loadAudio(this.kBGM);
+    gEngine.AudioClips.stopBackgroundAudio();
     
 
 };

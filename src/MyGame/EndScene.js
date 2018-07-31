@@ -22,6 +22,9 @@ function EndScene(){
      this.kclick= "assets/click.png";
       this.khead= "assets/starforyou.png";
       this.kname="assets/copyright.png";
+    this.kLastBGM= "assets/Lopu.mp3";  
+    this.kBGM = "assets/TheRightPath.mp3";
+      
     this.meet=0;
     this.starchange=0;
     this.createstar=0;
@@ -36,6 +39,9 @@ EndScene.prototype.loadScene=function(){
      gEngine.Textures.loadTexture(this.kclick);
      gEngine.Textures.loadTexture(this.khead);
     gEngine.Textures.loadTexture(this.kname);
+    gEngine.AudioClips.stopBackgroundAudio();
+    gEngine.AudioClips.unloadAudio(this.kLastBGM);
+    gEngine.AudioClips.loadAudio(this.kBGM);
     
 };
 EndScene.prototype.unloadScene=function(){
@@ -45,10 +51,13 @@ EndScene.prototype.unloadScene=function(){
       gEngine.Textures.unloadTexture(this.kclick);
        gEngine.Textures.unloadTexture(this.khead);
         gEngine.Textures.loadTexture(this.kname);
+     gEngine.AudioClips.unloadAudio(this.kBGM);
+     
      var nextLevel =new StartScene();
      gEngine.Core.startScene(nextLevel);
 };
 EndScene.prototype.initialize=function(){
+    gEngine.AudioClips.playBackgroundAudio(this.kBGM);
     this.mCamera = new Camera(
         vec2.fromValues(400, 300), // position of the camera
         800,                     // width of camera
