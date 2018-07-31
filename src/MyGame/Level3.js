@@ -293,7 +293,7 @@ Level3.prototype.initializeKeyN = function(){
     this.mKeyNset=new GameObjectSet(); 
     this.mKeyNTip = new FontRenderable("Hold [N] to skip to Level4");
     this.mKeyNTip.setColor([0.447,0.286,0.219, 1]);
-    this.mKeyNTip.getXform().setPosition(900,450);
+    this.mKeyNTip.getXform().setPosition(890,450);
     this.mKeyNTip.setTextHeight(14);
     this.mKeyNset.addToSet(this.mKeyNTip);
     
