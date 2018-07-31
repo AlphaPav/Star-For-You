@@ -318,7 +318,7 @@ Level4.prototype.initializePlatformset= function(){
     
     this.platform5=new MapObject(500,300,0,120,8,null);
     this.mPlatformset.addToSet(this.platform5);
-    this.platform6=new MapObject(280,280,0,90,8,null);
+    this.platform6=new MapObject(285,280,0,90,8,null);
     this.mPlatformset.addToSet(this.platform6);
     
     this.platform7=new MapObject(410,250,0,8,60,null);
